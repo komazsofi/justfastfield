@@ -51,5 +51,7 @@ data_plot_5m_witheng_filt=na.omit(data_plot_5m_witheng)
 
 data_plot_5m_witheng_filt_shp=CreateShape(data_plot_5m_witheng_filt)
 
+#export
+
 shapefile(data_plot_5m_witheng_filt_shp,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/data_plot_5m_onlyeng.shp")
 
