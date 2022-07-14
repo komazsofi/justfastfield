@@ -1,16 +1,16 @@
 library(terra)
 
 # Set working directory
-workingdirectory="O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/forHanne_basemap_extract/"
+workingdirectory="O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/"
 setwd(workingdirectory)
 
-basemapfile="lu_00_2018.tif"
+basemapfile="O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/forHanne_basemap_extract/lu_00_2018.tif"
 
 # Import
 
 basemap=rast(basemapfile)
 
-# Automatically extract the §3 and natura-2000 habitats (a 0-1 mask)
+# Automatically extract the ?3 and natura-2000 habitats (a 0-1 mask)
 
 listofcodes=c(30000100,30000200,30000300,30000400,30000500,30000600,
               40121000,40122000,40123000,40131000,40132000,40133000,40134000,
@@ -37,6 +37,14 @@ writeRaster(basemap_layer_ph3,paste("basemap_class_ph3all.tif",paste=""),overwri
 
 basemap_layer_nat2000 <- clamp(basemap, 40121000, 40919000,values=FALSE) 
 writeRaster(basemap_layer_nat2000,paste("basemap_class_nat2000all.tif",paste=""),overwrite=TRUE)
+
+# only ph3 eng and mose
+
+ph3_eng <- clamp(basemap, 30000100, 30000100,values=FALSE)
+ph3_mose <- clamp(basemap, 30000300, 30000300,values=FALSE)
+
+ph3_eng_mose <- merge(ph3_eng,ph3_mose)
+writeRaster(ph3_eng_mose,paste("ph3_eng_mose.tif",paste=""),overwrite=TRUE)
 
 
 
