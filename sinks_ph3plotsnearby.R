@@ -1,6 +1,7 @@
 library(sf)
 library(raster)
 library(tidyverse)
+library(writexl)
 
 CreateShape = function(data) {
   
@@ -68,6 +69,13 @@ study_area_1000m_shp=CreateShape(study_area_1000m_df_c)
 
 shapefile(study_area_1000m_shp,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/sinkplots_withbufferzones_v4_engmose.shp")
 
+# export as excel
+
+resultedfile=st_read("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/sinkplots_withbufferzones_v4_engmose.shp")
+res_df=as.data.frame(resultedfile)
+
+write_xlsx(res_df,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/sinkplots_withbufferzones_v4_engmose.xlsx")
+write.csv(res_df,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/sinkplots_withbufferzones_v4_engmose.csv")
 
 
 
