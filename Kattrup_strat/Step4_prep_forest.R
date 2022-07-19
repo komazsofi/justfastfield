@@ -17,11 +17,11 @@ loc_oldtrees=readOGR(dsn="O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquic
 forest_type_con=raster("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Input_datasets/for_Zofia/treetype/treetype_bjer_con.tif")
 forest_type_dec=raster("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Input_datasets/for_Zofia/treetype/treetype_bjer_dec.tif")
 
-forest_disturb=raster("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Input_datasets/disturbance_since_2015_cog_epsg3857_v0.1.0.tif")
+forest_disturb=raster("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Input_datasets/disturbance_since_2015_cog_epsg3857_v0.1.0_utm.tif")
 #forest_disturb_utm=projectRaster(forest_disturb,crs = crs(study_area))
 #writeRaster(forest_disturb_utm,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Input_datasets/disturbance_since_2015_cog_epsg3857_v0.1.0_utm.tif")
 
-# prep combined forest quality map :
+# prep combined forest quality map : 0- not forest, 1 - high quality, 2- low quality, 3- really high quailty old forest
 
 forestqual_pred_crop <- crop(forestqual_pred,study_area)
 forestqual_pred_crop_resampl=resample(forestqual_pred_crop,asreference,method='ngb')
@@ -55,7 +55,7 @@ forestqual_combined <- overlay(forestqual_pred_crop_resampl, oldforest_combined,
 forestqual_combined[is.na(forestqual_combined[])] <- 1
 writeRaster(forestqual_combined,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Organized_raster_layers/forest_qualcomb.tif",overwrite=TRUE)
 
-## tree type map
+# tree type map
 
 forest_type_con_crop <- crop(forest_type_con,study_area)
 forest_type_dec_crop <- crop(forest_type_dec,study_area)
@@ -64,3 +64,9 @@ forest_type_dec_crop <- crop(forest_type_dec,study_area)
 forest_type_crop <- overlay(forest_type_dec_crop, forest_type_con_crop, fun=function(x, y) ifelse(x==0 & y==1, 2, x)) 
 forest_type_crop_resamp=resample(forest_type_crop,asreference,method='ngb')
 writeRaster(forest_type_crop_resamp,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Organized_raster_layers/forest_treetype.tif",overwrite=TRUE)
+
+# forest disturbance map
+
+forest_disturb_crop <- crop(forest_disturb,study_area)
+forest_disturb_crop_resamp=resample(forest_disturb_crop,asreference,method='ngb')
+writeRaster(forest_disturb_crop_resamp,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Organized_raster_layers/forest_disturbance.tif",overwrite=TRUE)
