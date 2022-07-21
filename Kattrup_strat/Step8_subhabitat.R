@@ -12,18 +12,22 @@ layers=stack(rasterfiles)
 
 # Masking 
 
-## road
+## fill up holes
 
-layers[[9]][layers[[9]] < 15] <- NA
-layers_wroadmask <- mask(layers, layers[[9]])
+#layers[[12]][is.na(layers[[12]])] <- 0
+#layers[[20]][is.na(layers[[20]])] <- 0
+#layers[[21]][is.na(layers[[21]])] <- 0
+#layers[[22]][is.na(layers[[22]])] <- 0
+
+## forest mask
 
 layers[[27]]=layers[[3]]
 
 layers[[27]][layers[[27]] > 0] <- 1
 names(layers[[27]])<-"forest_mask"
 
-layers_wroadmask_forest <- mask(layers_wroadmask, layers[[27]])
-layers_wroadmask_forest_open <- mask(layers_wroadmask, layers[[27]],inverse=TRUE)
+layers_wroadmask_forest <- mask(layers, layers[[27]])
+layers_wroadmask_forest_open <- mask(layers, layers[[27]],inverse=TRUE)
 
 # Open-Close
 
@@ -58,7 +62,7 @@ stratified_drywet_open <- Stratify(layers_sel_drywet_open,LowGroup = 2, HighGrou
 FinalRaster_drywet_open <- stratified_drywet_open$FinalStack
 plot(FinalRaster_drywet_open)
 
-writeRaster(FinalRaster_drywet_open,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_selcontlayers_drywet_open.tif")
+writeRaster(FinalRaster_drywet_open,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_selcontlayers_drywet_open_v3.tif")
 
 # Dry-wet (Closed)
 
@@ -72,6 +76,6 @@ stratified_drywet_forest <- Stratify(layers_sel_drywet_forest,LowGroup = 2, High
 FinalRaster_drywet_forest <- stratified_drywet_forest$FinalStack
 plot(FinalRaster_drywet_forest)
 
-writeRaster(FinalRaster_drywet_forest,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_selcontlayers_drywet_forest.tif")
+writeRaster(FinalRaster_drywet_forest,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_selcontlayers_drywet_forest_v3.tif")
 
 
