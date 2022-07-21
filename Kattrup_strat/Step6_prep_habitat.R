@@ -28,16 +28,30 @@ natura2000_habitats_r <- raster()
 extent(natura2000_habitats_r) <- extent(asreference)
 res(natura2000_habitats_r) <- res(asreference) 
 
-## introduce the classes
+## rasterize natura-2000 habitats
 
 natura2000_habitats_crop@data$Naturtype=as.factor(natura2000_habitats_crop@data$Naturtype)
 natura2000_habitats_r_c_all <- rasterize(natura2000_habitats_crop, natura2000_habitats_r,"Naturtype")
 
 crs(natura2000_habitats_r_c_all)<-crs(asreference)
 
-# make p3 protected area raster
+## reclassify natura-2000 raster (wet-dry habitats)
+
+natura2000_habitats_reclass_wetdry=reclassify(natura2000_habitats_r_c_all,c(-Inf,2,NA,2,3,1,3,6,2,6,10,1,10,12,4,12,14,3,14,Inf,NA))
+
+# reclassify ph3 raster (area,wet-dry habitats)
 
 ph3_habitats_crop_reclass=reclassify(ph3_habitats_crop,c(-Inf,7,1,7,Inf,NA))
+ph3_habitats_crop_reclass_wetdry=reclassify(ph3_habitats_crop,c(-Inf,-1,NA,-1,3,1,3,4,2,4,Inf,NA))
+
+# combine §3 and natura-2000 aggregated habitat map
+
+aggregated_habitat_map=natura2000_habitats_reclass_wetdry
+
+aggregated_habitat_map[is.na(aggregated_habitat_map)] <- ph3_habitats_crop_reclass_wetdry
+
+aggregated_habitat_map <- overlay(natura2000_habitats_reclass_wetdry, ph3_habitats_crop_reclass_wetdry, fun=function(x, y) ifelse(is.na(x) & !is.na(y), y, x)) 
+crs(aggregated_habitat_map)=crs(asreference)
 
 # export
 
@@ -46,3 +60,4 @@ writeRaster(natura2000_crop,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justq
 writeRaster(ph3_habitats_crop_reclass,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Organized_raster_layers/habitat_ph3area.tif")
 
 writeRaster(natura2000_habitats_r_c_all,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Organized_raster_layers/habitat_natura2000habitats.tif",overwrite=TRUE)
+writeRaster(aggregated_habitat_map,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Organized_raster_layers/habitat_aggregated_wetrdyopenclose.tif",overwrite=TRUE)
