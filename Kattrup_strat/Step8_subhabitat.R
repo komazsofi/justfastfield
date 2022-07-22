@@ -32,6 +32,8 @@ names(layers[[27]])<-"forest_mask"
 layers_wroadmask_forest <- mask(layers, layers[[27]])
 layers_wroadmask_forest_open <- mask(layers, layers[[27]],inverse=TRUE)
 
+writeRaster(layers[[27]],"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_selcontlayers_openclose_hardclass.tif",overwrite=TRUE)
+
 # Open-Close
 
 ## Select set of variables for stratification to get open-close
