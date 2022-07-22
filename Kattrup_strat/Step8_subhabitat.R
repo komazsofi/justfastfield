@@ -3,6 +3,9 @@ library(rgdal)
 
 library(GeoStratR)
 
+library(factoextra)
+library(corrplot)
+
 setwd("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Organized_raster_layers/")
 
 #Import raster layers
@@ -56,6 +59,19 @@ writeRaster(FinalRaster_onlyveg,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/J
 
 layers_sel_drywet_open=layers_wroadmask_forest_open[[c(10,11,12,14,15,17,18,20,21,22,24)]]
 
+##PCA
+set.seed(42)
+layers_drywet_open_samp <- sampleRandom(layers_sel_drywet_open, size = 1000)
+layers_drywet_open_samp_df <- as.data.frame(layers_drywet_open_samp )
+
+res.pca_drywet_open <- prcomp(layers_drywet_open_samp_df, scale = FALSE)
+
+fviz_pca_var(res.pca_drywet_open,
+             col.var = "contrib", # Color by contributions to the PC
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE     # Avoid text overlapping
+)
+
 ## Unsupervised clustering
 
 stratified_drywet_open <- Stratify(layers_sel_drywet_open,LowGroup = 2, HighGroup = 2)
@@ -69,6 +85,19 @@ writeRaster(FinalRaster_drywet_open,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au7005
 ## Select set of variables for stratification to get dry-wet in open areas
 
 layers_sel_drywet_forest=layers_wroadmask_forest[[c(10,11,12,14,15,17,18,20,21,22,24)]]
+
+##PCA
+set.seed(42)
+layers_drywet_forest_samp <- sampleRandom(layers_sel_drywet_forest, size = 1000)
+layers_drywet_forest_samp_df <- as.data.frame(layers_drywet_forest_samp )
+
+res.pca_drywet_forest <- prcomp(layers_drywet_forest_samp_df, scale = FALSE)
+
+fviz_pca_var(res.pca_drywet_forest,
+             col.var = "contrib", # Color by contributions to the PC
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE     # Avoid text overlapping
+)
 
 ## Unsupervised clustering
 

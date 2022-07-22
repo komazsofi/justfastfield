@@ -66,15 +66,15 @@ Export_Points(Points, name = "O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Just
 
 # Dry forest sub habitat
 
-subhabitats_forest_mask_dry_f=subhabitats_forest
-subhabitats_forest_mask_dry_f[subhabitats_forest_mask_dry_f == 1] <- NA
+subhabitats_mask_dry_forest=subhabitats_forest
+subhabitats_mask_dry_forest[subhabitats_mask_dry_forest == 1] <- NA
 
-layers_wroadmask_forest_dry_f <- mask(layers_wroadmask, subhabitats_forest_mask_dry_f)
+layers_wroadmask_dry_forest<- mask(layers_wroadmask, subhabitats_mask_dry_forest)
 
 ## PCA
 
 set.seed(42)
-layers_forest_dry_samp <- sampleRandom(layers_wroadmask_forest_dry_f, size = 1000)
+layers_forest_dry_samp <- sampleRandom(layers_wroadmask_dry_forest, size = 1000)
 layers_forest_dry_samp_df <- as.data.frame(layers_forest_dry_samp )
 
 res.pca_forest_dry <- prcomp(layers_forest_dry_samp_df[c(1,2,3,10,11,12,14,15,17,18,20,21,22,24)], scale = FALSE)
@@ -90,16 +90,16 @@ corrplot(var_forest_dry$contrib, is.corr=FALSE)
 
 ## stratification
 
-layers_sel_dry_f=layers_wroadmask_forest_dry_f[[c(1,2,3,10,14,15,17,18)]]
+layers_sel_forest_dry=layers_wroadmask_dry_forest[[c(1,2,3,10,14,15,17,18)]]
 
-stratified_dry_f <- Stratify(layers_sel_dry_f,LowGroup = 2, HighGroup = 2)
-FinalRaster_dry_f <- stratified_dry_f$FinalStack
-plot(FinalRaster_dry_f)
+stratified_forest_dry <- Stratify(layers_sel_forest_dry,LowGroup = 2, HighGroup = 2)
+FinalRaster_forest_dry <- stratified_forest_dry$FinalStack
+plot(FinalRaster_forest_dry)
 
-Points_dry_f <- Random_Stratified_Min_Dist(ClassRaster = FinalRaster_dry_f,
+Points__forest_dry <- Random_Stratified_Min_Dist(ClassRaster = FinalRaster_forest_dry,
                                      MinDist = 10,
                                      n = 25,
                                      n_to_test = 100)
 
-Export_Points(Points_dry_f, name = "O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_dry_forest_50_2cluster")
+Export_Points(Points_forest_dry, name = "O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_dry_forest_50_2cluster")
 
