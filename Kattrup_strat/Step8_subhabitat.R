@@ -36,28 +36,21 @@ layers_wroadmask_forest_open <- mask(layers, layers[[27]],inverse=TRUE)
 
 ## Select set of variables for stratification to get open-close
 
-layers_sel=layers_wroadmask[[c(10,11,12,14,15,17,18,20,21,22,24)]]
-layers_sel_onlyveg=layers_sel[[c(1,4,5,6,7)]]
+layers_sel=layers[[c(10,14,17)]]
 
 ## Unsupervised clustering
 
-stratified <- Stratify(layers_sel,LowGroup = 2, HighGroup = 3)
+stratified <- Stratify(layers_sel,LowGroup = 2, HighGroup = 2)
 FinalRaster <- stratified$FinalStack
 plot(FinalRaster)
 
-writeRaster(FinalRaster,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_selcontlayers_openclose.tif")
-
-stratified_onlyveg <- Stratify(layers_sel_onlyveg,LowGroup = 2, HighGroup = 2)
-FinalRaster_onlyveg <- stratified_onlyveg$FinalStack
-plot(FinalRaster_onlyveg)
-
-writeRaster(FinalRaster_onlyveg,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_selcontlayers_openclose_onlyveg.tif")
+writeRaster(FinalRaster,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_selcontlayers_openclose_v4.tif")
 
 # Dry-wet (Open)
 
 ## Select set of variables for stratification to get dry-wet in open areas
 
-layers_sel_drywet_open=layers_wroadmask_forest_open[[c(10,11,12,14,15,17,18,20,21,22,24)]]
+layers_sel_drywet_open=layers_wroadmask_forest_open[[c(11,12,20,21,22,24)]]
 
 ##PCA
 set.seed(42)
@@ -78,13 +71,13 @@ stratified_drywet_open <- Stratify(layers_sel_drywet_open,LowGroup = 2, HighGrou
 FinalRaster_drywet_open <- stratified_drywet_open$FinalStack
 plot(FinalRaster_drywet_open)
 
-writeRaster(FinalRaster_drywet_open,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_selcontlayers_drywet_open_v3.tif")
+writeRaster(FinalRaster_drywet_open,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_selcontlayers_drywet_open_v4.tif")
 
 # Dry-wet (Closed)
 
 ## Select set of variables for stratification to get dry-wet in open areas
 
-layers_sel_drywet_forest=layers_wroadmask_forest[[c(10,11,12,14,15,17,18,20,21,22,24)]]
+layers_sel_drywet_forest=layers_wroadmask_forest[[c(11,12,20,21,22,24)]]
 
 ##PCA
 set.seed(42)
@@ -105,6 +98,6 @@ stratified_drywet_forest <- Stratify(layers_sel_drywet_forest,LowGroup = 2, High
 FinalRaster_drywet_forest <- stratified_drywet_forest$FinalStack
 plot(FinalRaster_drywet_forest)
 
-writeRaster(FinalRaster_drywet_forest,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_selcontlayers_drywet_forest_v3.tif")
+writeRaster(FinalRaster_drywet_forest,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/Strat_selcontlayers_drywet_forest_v4.tif")
 
 
