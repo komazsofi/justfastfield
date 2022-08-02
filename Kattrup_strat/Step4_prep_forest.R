@@ -26,7 +26,7 @@ forest_disturb=raster("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_f
 forestqual_pred_crop <- crop(forestqual_pred,study_area)
 forestqual_pred_crop_resampl=resample(forestqual_pred_crop,asreference,method='ngb')
 forestqual_pred_crop_resampl=as.integer(forestqual_pred_crop_resampl)
-writeRaster(forestqual_pred_crop_resampl,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Input_datasets/forestqual_pred_crop_resampl.tif",overwrite=TRUE)
+writeRaster(forestqual_pred_crop_resampl,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Organized_raster_layers/forest_qualsimple.tif",overwrite=TRUE)
 
 ## rasterizing shapefiles
 
