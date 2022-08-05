@@ -80,7 +80,7 @@ Random_Stratified_Min_Dist_mod <- function(ClassRaster = NULL, MinDist = NULL, n
   Thined <- dplyr::left_join(Thined, Samples) %>%
     dplyr::select(-Sp) %>%
     dplyr::group_by(Class) %>%
-    dplyr::slice_sample(n = n) %>%
+    dplyr::slice_sample(n = n,replace = TRUE) %>%
     dplyr::ungroup() %>%
     sf::st_as_sf(coords = c("X", "Y"), crs = "+proj=longlat +datum=WGS84 +no_defs") %>%
     sf::st_transform(crs = raster::projection(ClassRaster))
