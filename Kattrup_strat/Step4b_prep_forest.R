@@ -23,8 +23,8 @@ plot(forestmap_int_sel$ALDER,forestmap_int_sel$AARGANG,col=factor(forestmap_int_
 forestmap_int_gr=forestmap_int
 forestmap_int_gr[forestmap_int_gr@data$ART=="BÃ˜G",]<-1
 forestmap_int_gr[forestmap_int_gr@data$ART=="eg",]<-2
-forestmap_int_gr[forestmap_int_gr@data$ART=="el",]<-3
-forestmap_int_gr[forestmap_int_gr@data$ART %in% c("ALÃ˜","ask","bir","pil","pop","rel","rem","VÃ†R","v�r"),]<-4
+forestmap_int_gr[forestmap_int_gr@data$ART %in% c("el","rel","ask"),]<-3
+forestmap_int_gr[forestmap_int_gr@data$ART %in% c("ALÃ˜","bir","pil","pop","rem","VÃ†R","v�r"),]<-4
 forestmap_int_gr[forestmap_int_gr@data$ART %in% c("dgr","LÃ†R","ngr","ngrj","ngrp","nob","nobp","rgr","sgr","skf","thu","Ã†GR","Ã†R")]<-5
 
 # rasterize info
