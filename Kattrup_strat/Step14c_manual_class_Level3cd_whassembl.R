@@ -61,3 +61,15 @@ comb_forestwet_simpl[comb_forestwet_simpl==21 | comb_forestwet_simpl==22]<-21
 comb_forestwet_simpl[comb_forestwet_simpl==23]<-22
 
 writeRaster(comb_forestwet_simpl,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/toDerek/comb_forestwet_simpl2.tif",overwrite=TRUE)
+
+# combine based on Signe's advice
+
+comb_forestdry_simpl[comb_forestdry_simpl==11 | comb_forestdry_simpl==21]<-1121
+comb_forestdry_simpl[comb_forestdry_simpl==22 | comb_forestdry_simpl==12]<-2212
+
+writeRaster(comb_forestdry_simpl,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/toDerek/comb_forestdry_simpl3.tif",overwrite=TRUE)
+
+comb_forestwet_simpl[comb_forestwet_simpl==11 | comb_forestwet_simpl==21]<-1121
+comb_forestwet_simpl[comb_forestwet_simpl==22 | comb_forestwet_simpl==12]<-2212
+
+writeRaster(comb_forestwet_simpl,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Kattrup_Stratification/Results/toDerek/comb_forestwet_simpl3.tif",overwrite=TRUE)
