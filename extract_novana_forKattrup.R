@@ -51,11 +51,16 @@ data_plot_5m_kattrup_filt=data_plot_5m_kattrup_filt[,c(1,2,3,4,5,6,7,8)]
 data_plot_5m_kattrup_filt_shp=CreateShape(data_plot_5m_kattrup_filt)
 crs(data_plot_5m_kattrup_filt_shp)<-crs(asreference)
 
+CRS.new=CRS("+init=epsg:4326")
+data_plot_5m_kattrup_filt_shp_wgs84 <- spTransform(data_plot_5m_kattrup_filt_shp, CRS.new)
+data_plot_5m_kattrup_filt_shp_wgs84_df <- as.data.frame(data_plot_5m_kattrup_filt_shp_wgs84)
+
 #export
 
 write.xlsx(data_plot_5m_kattrup_filt, "O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/toSigne/data_plot_5m_kattrup_filt.xlsx",overwrite=TRUE)
 shapefile(data_plot_5m_kattrup_filt_shp,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/toSigne/data_plot_5m_kattrup_filt.shp",overwrite=TRUE)
 writeOGR(data_plot_5m_kattrup_filt_shp,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/toSigne/data_plot_5m_kattrup_filt.kml",driver="KML",layer="Habitat")
+write.xlsx(data_plot_5m_kattrup_filt_shp_wgs84_df, "O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/toSigne/data_plot_5m_kattrup_filt_wgs84.xlsx",overwrite=TRUE)
 
 # export per program
 
