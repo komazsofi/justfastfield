@@ -1,0 +1,143 @@
+library(terra)
+library(foreign)
+library(tidyverse)
+library(tm)
+library(sf)
+library(landscapemetrics)
+
+library(cluster)  
+library(factoextra)
+
+# import
+
+#cropmap=vect("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/_inputdata/Markblokke.shp")
+cropmap_centers=vect("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/cropmap_centers.shp")
+basemap=rast("O:/Nat_Sustain-proj/_user/HanneNicolaisen_au704629/Data/Land_cover_maps/Basemap/Basemap03_public_geotiff/basemap03_2011_2016_2018/lu_agg_2018.tif")
+classes <- read.dbf("O:/Nat_Sustain-proj/_user/HanneNicolaisen_au704629/Data/Land_cover_maps/Basemap/Basemap03_public_geotiff/basemap03_2018/lu_00_2018.tif.vat.dbf")
+areaofint=vect("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/CA_selection_utm.shp")
+  
+# prep basemap with relevant classes
+
+class_c <- c(110000, NA,
+             121000, NA,
+             121110, NA,
+             122000, NA,
+             122110, NA,
+             123000, NA,
+             123110, NA,
+             124000, NA,
+             124110, NA,
+             125000, NA,
+             125110, NA,
+             126000, NA,
+             126110, NA,
+             130000, NA,
+             130110, NA,
+             141000, NA,
+             142000, NA,
+             150000, NA,
+             150110, NA,
+             160000, NA,
+             211000, 211000,
+             212000, 212000,
+             220000, 220000,
+             230000, NA,
+             311000, 311000,
+             312000, 312000,
+             321000, 321000,
+             321220, NA,
+             322000, 322000,
+             322220, NA,
+             411000, 411000,
+             412000, NA,
+             420000, NA,
+             800000, NA,
+             999999, NA)
+
+class_c_m <- matrix(class_c, ncol=2, byrow=TRUE)
+basemap_reclass<- classify(basemap,class_c_m)
+#writeRaster(basemap_reclass,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/Basemap_reclass.tif")
+
+# create cropmap centroids (inside the plots)
+
+#cropmap$area=expanse(cropmap,unit="ha", transform=TRUE)
+#cropmap_centers=centroids(cropmap, inside=TRUE)
+#writeVector(cropmap_centers, "O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/cropmap_centers.shp", overwrite=TRUE)
+
+key <- classes %>% dplyr::select(C_11, C_13) %>% distinct() %>% rename(value = C_11, habitat_type = C_13)
+key$habitat_type <- tm::removeNumbers(as.character(key$habitat_type)) %>% str_trim()
+key$value[23]<-0
+key$habitat_type[23]<-"Other"
+
+centers <- sf::st_as_sf(cropmap_centers)
+centers$plotID=seq(1,dim(cropmap_centers)[1])
+
+# reduce for area of interests
+
+aoi=buffer(areaofint,width=10000)
+
+for (i in 1:length(aoi)) {
+  
+  basemap_reclass_crop=crop(basemap_reclass,ext(aoi[i]))
+  centers_crop=crop(vect(centers),ext(aoi[i]))
+  
+  centers_crop_sf <- sf::st_as_sf(centers_crop)
+  
+  # calculate proportion of land use classes
+  
+  start_time <- Sys.time()
+  
+  prop_classes=sample_lsm(basemap_reclass_crop, y = centers_crop_sf, size = 2500,plot_id=centers_crop_sf$plotID, what = "lsm_c_pland",all_classes = TRUE)
+  
+  end_time <- Sys.time()
+  print(end_time - start_time)
+  
+  # organize data frames
+  
+  prop_classess_wnames=merge(x=prop_classes,y=key,by.x="class",by.y="value")
+  prop_classess_wnames$value[is.na(prop_classess_wnames$value)]=0
+  prop_classess_wnames_sel=prop_classess_wnames[c(7,6,9)]
+  
+  prop_classess_wnames_sel_t=prop_classess_wnames_sel %>% 
+    spread(habitat_type, value) 
+  
+  centers_merge=merge(x=centers_crop_sf,y=prop_classess_wnames_sel_t,by.x="plotID",by.y="plot_id")
+  centers_merge_shp=st_as_sf(centers_merge,wkt = "geometry")
+  
+  # export
+  
+  write.csv(centers_merge_shp,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output/",aoi$Name[i],"_centers_envprop_2500m.csv"))
+  
+  centers_merge_shp_wgs84=st_transform(centers_merge_shp,crs=4326)
+  st_write(centers_merge_shp_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output/",aoi$Name[i],"_centers_envprop_2500m.kml"))
+  
+  # remove points close to the CA field
+  
+  aoi2=buffer(areaofint[i],width=5000)
+  centers_sel=centers_merge_shp[st_as_sf(aoi2), op = st_disjoint]
+  
+  write.csv(centers_sel,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output/",aoi$Name[i],"_centers_envprop_2500m_sel.csv"))
+  
+  centers_sel_wgs84=st_transform(centers_sel,crs=4326)
+  st_write(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output/",aoi$Name[i],"_centers_envprop_2500m_sel.kml"))
+  
+  centers_sel2=centers_merge_shp[st_as_sf(aoi2), op = st_intersects]
+  
+  write.csv(centers_sel2,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output/",aoi$Name[i],"_centers_envprop_2500m_selin5km.csv"))
+  
+  centers_sel2_wgs84=st_transform(centers_sel2,crs=4326)
+  st_write(centers_sel2_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output/",aoi$Name[i],"_centers_envprop_2500m_selin5km.kml"))
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
