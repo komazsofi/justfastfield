@@ -8,6 +8,13 @@ library(landscapemetrics)
 library(cluster)  
 library(factoextra)
 
+fncols <- function(data, cname) {
+  add <-cname[!cname%in%names(data)]
+  
+  if(length(add)!=0) data[add] <- 0
+  data
+}
+
 # import
 
 #cropmap=vect("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/_inputdata/Markblokke.shp")
@@ -74,12 +81,12 @@ centers$plotID=seq(1,dim(cropmap_centers)[1])
 
 # reduce for area of interests
 
-aoi=buffer(areaofint,width=10000)
+aoi=buffer(areaofint,width=5000)
 
-for (i in 1:length(aoi)) {
+for (i in 1:1) { #length(aoi)
   
-  basemap_reclass_crop=crop(basemap_reclass,ext(aoi[i]))
-  centers_crop=crop(vect(centers),ext(aoi[i]))
+  basemap_reclass_crop=crop(basemap_reclass,aoi[i])
+  centers_crop=crop(vect(centers),aoi[i])
   
   centers_crop_sf <- sf::st_as_sf(centers_crop)
   
@@ -106,29 +113,100 @@ for (i in 1:length(aoi)) {
   
   # export
   
-  write.csv(centers_merge_shp,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output/",aoi$Name[i],"_centers_envprop_2500m.csv"))
+  #write.csv(centers_merge_shp,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output_2022oct/",aoi$Name[i],"_centers_envprop_2500m.csv"))
   
-  centers_merge_shp_wgs84=st_transform(centers_merge_shp,crs=4326)
-  st_write(centers_merge_shp_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output/",aoi$Name[i],"_centers_envprop_2500m.kml"))
+  #centers_merge_shp_wgs84=st_transform(centers_merge_shp,crs=4326)
+  #st_write(centers_merge_shp_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output_2022oct/",aoi$Name[i],"_centers_envprop_2500m.kml"))
   
   # remove points close to the CA field
   
-  aoi2=buffer(areaofint[i],width=5000)
+  aoi2=buffer(areaofint[i],width=-2500)
   centers_sel=centers_merge_shp[st_as_sf(aoi2), op = st_disjoint]
   
-  write.csv(centers_sel,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output/",aoi$Name[i],"_centers_envprop_2500m_sel.csv"))
+  write.csv(centers_sel,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output_2022oct/",aoi$Name[i],"_centers_envprop_2500m_donut.csv"))
   
   centers_sel_wgs84=st_transform(centers_sel,crs=4326)
-  st_write(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output/",aoi$Name[i],"_centers_envprop_2500m_sel.kml"))
+  st_write(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output_2022oct/",aoi$Name[i],"_centers_envprop_2500m_donut.kml"))
   
-  centers_sel2=centers_merge_shp[st_as_sf(aoi2), op = st_intersects]
+  #centers_sel2=centers_merge_shp[st_as_sf(aoi2), op = st_intersects]
   
-  write.csv(centers_sel2,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output/",aoi$Name[i],"_centers_envprop_2500m_selin5km.csv"))
+  #write.csv(centers_sel2,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output_2022oct/",aoi$Name[i],"_centers_envprop_2500m_selin5km.csv"))
   
-  centers_sel2_wgs84=st_transform(centers_sel2,crs=4326)
-  st_write(centers_sel2_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output/",aoi$Name[i],"_centers_envprop_2500m_selin5km.kml"))
+  #centers_sel2_wgs84=st_transform(centers_sel2,crs=4326)
+  #st_write(centers_sel2_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output_2022oct/",aoi$Name[i],"_centers_envprop_2500m_selin5km.kml"))
   
 }
+
+CAplot_stat_df <- data.frame(matrix(ncol = 19, nrow = 0))
+x <- c("plotID","Name","descriptio","timestamp","begin","end","altitudeMo","tessellate","extrude","visibility","drawOrder","icon","Agriculture, intensive, permanent crops",
+       "Agriculture, intensive, temporary crops","Forest","Forest, wet","Lake","Nature, dry","Nature, wet")
+
+colnames(CAplot_stat_df) <- x
+
+
+for (i in 1:5) { #length(aoi)
+  
+  basemap_reclass_crop=crop(basemap_reclass,aoi[i])
+  
+  aoi_sf <- sf::st_as_sf(aoi[i])
+  aoi_sf$plotID=i
+  
+  # calculate proportion of land use classes
+  
+  start_time <- Sys.time()
+  
+  prop_classes_CAfield=sample_lsm(basemap_reclass_crop, y = aoi_sf, size = 2500,plot_id=i, what = "lsm_c_pland",all_classes = TRUE)
+  
+  end_time <- Sys.time()
+  print(end_time - start_time)
+  
+  prop_classess_wnames_CAfield=merge(x=prop_classes_CAfield,y=key,by.x="class",by.y="value")
+  
+  prop_classess_wnames_CAfield$value[is.na(prop_classess_wnames_CAfield$value)]=0
+  prop_classess_wnames_CAfield_sel=prop_classess_wnames_CAfield[c(7,6,9)]
+  
+  prop_classess_wnames_CAfield_sel_t=prop_classess_wnames_CAfield_sel %>% 
+    spread(habitat_type, value) 
+  
+  aoi_sf_all <- sf::st_as_sf(aoi)
+  aoi_sf_all$plotID=seq(1,dim(aoi_sf_all)[1])
+  
+  centers_merge_CAfield=merge(x=aoi_sf_all,y=prop_classess_wnames_CAfield_sel_t,by.x="plotID",by.y="plot_id")
+  
+  centers_merge_CAfield_all=fncols(centers_merge_CAfield, c("Agriculture, intensive, permanent crops","Agriculture, intensive, temporary crops","Forest","Forest, wet","Lake","Nature, dry","Nature, wet"))
+  #print(centers_merge_CAfield_all)
+  
+  newline <- data.frame(t(c(plotID=centers_merge_CAfield_all$plotID,
+                            Name=centers_merge_CAfield_all$Name,
+                            descriptio=centers_merge_CAfield_all$descriptio,
+                            timestamp=centers_merge_CAfield_all$timestamp,
+                            begin=centers_merge_CAfield_all$begin,
+                            end=centers_merge_CAfield_all$end,
+                            altitudeMo=centers_merge_CAfield_all$altitudeMo,
+                            tessellate=centers_merge_CAfield_all$tessellate,
+                            extrude=centers_merge_CAfield_all$extrude,
+                            visibility=centers_merge_CAfield_all$visibility,
+                            drawOrder=centers_merge_CAfield_all$drawOrder,
+                            icon=centers_merge_CAfield_all$icon,
+                            `Agriculture, intensive, permanent crops`=centers_merge_CAfield_all$`Agriculture, intensive, permanent crops`,
+                            `Agriculture, intensive, temporary crops`=centers_merge_CAfield_all$`Agriculture, intensive, temporary crops`,
+                            Forest=centers_merge_CAfield_all$Forest,
+                            `Forest, wet`=centers_merge_CAfield_all$`Forest, wet`,
+                            Lake=centers_merge_CAfield_all$Lake,
+                            `Nature, dry`=centers_merge_CAfield_all$`Nature, dry`,
+                            `Nature, wet`=centers_merge_CAfield_all$`Nature, wet`)))
+  
+  #print(newline)
+  
+  CAplot_stat_df <- rbind(CAplot_stat_df, newline)
+  
+  gc()
+  
+}
+
+
+
+
 
 
 

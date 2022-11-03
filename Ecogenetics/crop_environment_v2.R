@@ -7,7 +7,7 @@ library(landscapemetrics)
 
 # import
 
-cropmap=vect("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/CA_selection_utm.shp")
+cropmap=vect("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/CA_plots_oct2022.shp")
 basemap=rast("O:/Nat_Sustain-proj/_user/HanneNicolaisen_au704629/Data/Land_cover_maps/Basemap/Basemap03_public_geotiff/basemap03_2011_2016_2018/lu_agg_2018.tif")
 classes <- read.dbf("O:/Nat_Sustain-proj/_user/HanneNicolaisen_au704629/Data/Land_cover_maps/Basemap/Basemap03_public_geotiff/basemap03_2018/lu_00_2018.tif.vat.dbf")
 
@@ -78,7 +78,7 @@ colnames(crop_stat_df) <- x
 
 start_time <- Sys.time()
 
-for (i in 1:dim(centers_buff)[1]) {
+for (i in 1:3) { #dim(centers_buff)[1]
   
   print(i)
   
