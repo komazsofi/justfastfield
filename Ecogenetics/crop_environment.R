@@ -168,7 +168,9 @@ write.csv(CAfield_wcoord_shp_wgs84,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au70051
 
 # calc stat for fields in surroundings
 
-for (i in 1:length(aoi)) { 
+for (i in 153:length(aoi)) { 
+  
+  print(i)
   
   basemap_reclass_crop=crop(basemap_reclass,aoi[i])
   centers_crop=crop(vect(centers),aoi[i])
@@ -203,10 +205,10 @@ for (i in 1:length(aoi)) {
   aoi2=buffer(areaofint[i],width=-2500)
   centers_sel=centers_merge_shp[st_as_sf(aoi2), op = st_disjoint]
   
-  write.csv(centers_sel,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output_2022oct/",aoi$Name[i],"_centers_envprop_2500m_donut.csv"))
-  
   centers_sel_wgs84=st_transform(centers_sel,crs=4326)
-  st_write(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output_2022oct/",aoi$Name[i],"_centers_envprop_2500m_donut.kml"))
+  st_write(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output_2022oct/",i,"_centers_envprop_2500m_donut.kml"))
+  
+  write.csv(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Justquick_fielddata/_Ecogenetics_crop/output_2022oct/",i,"_centers_envprop_2500m_donut.csv"))
   
 }
 
