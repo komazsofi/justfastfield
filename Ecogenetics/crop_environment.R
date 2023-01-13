@@ -95,7 +95,7 @@ colnames(CAplot_stat_df) <- x
 
 # calc stat for the CA plots
 
-for (i in 1:2) {  #length(aoi)
+for (i in 1:length(aoi)) {  #length(aoi)
   
   basemap_reclass_crop=crop(basemap_reclass,aoi[i])
   
@@ -173,7 +173,7 @@ write.csv(CAfield_wcoord_shp_wgs84,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au70051
 
 # calc stat for fields in surroundings
 
-for (i in 1:2) { #length(aoi)
+for (i in 1:length(aoi)) { #length(aoi)
   
   print(i)
   
@@ -213,9 +213,9 @@ for (i in 1:2) { #length(aoi)
   centers_sel=centers_merge_shp[st_as_sf(aoi2), op = st_disjoint]
   
   centers_sel_wgs84=st_transform(centers_sel,crs=4326)
-  st_write(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/output_2023jan/",i,"_centers_envprop_2500m_donut.kml"))
   
-  write.csv(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/output_2023jan/",i,"_centers_envprop_2500m_donut.csv"))
+  st_write(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/output_2023jan/",aoi$Name[i],"_centers_envprop_2500m_donut.kml"))
+  write.csv(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/output_2023jan/",aoi$Name[i],"_centers_envprop_2500m_donut.csv"))
   
 }
 
