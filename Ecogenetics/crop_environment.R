@@ -21,7 +21,7 @@ cropmap=vect("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_E
 cropmap_centers=vect("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/cropmap_centers.shp")
 basemap=rast("O:/Nat_Sustain-proj/_user/HanneNicolaisen_au704629/Data/Land_cover_maps/Basemap/Basemap03_public_geotiff/basemap03_2011_2016_2018/lu_agg_2018.tif")
 classes <- read.dbf("O:/Nat_Sustain-proj/_user/HanneNicolaisen_au704629/Data/Land_cover_maps/Basemap/Basemap03_public_geotiff/basemap03_2018/lu_00_2018.tif.vat.dbf")
-areaofint_wgs=vect("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/_inputdata/CA_fields_EcoGen_VS_2023_v2.kml")
+areaofint_wgs=vect("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/_inputdata/CA_fields_EcoGen_VS_febr.kml")
 
 # reproject areaofint
 
@@ -85,7 +85,7 @@ centers$plotID=seq(1,dim(cropmap_centers)[1])
 
 # reduce for area of interests
 
-aoi=buffer(areaofint,width=5000)
+aoi=buffer(areaofint,width=7000)
 
 CAplot_stat_df <- data.frame(matrix(ncol = 19, nrow = 0))
 x <- c("plotID","Name","descriptio","timestamp","begin","end","altitudeMo","tessellate","extrude","visibility","drawOrder","icon","Agriculture, intensive, permanent crops",
@@ -168,8 +168,8 @@ cropmap_sf=st_transform(cropmap_sf_1,st_crs(CAfield_wcoord_shp))
 CAfield_wcoord_shp_intersect=st_intersection(CAfield_wcoord_shp,cropmap_sf)
 
 CAfield_wcoord_shp_wgs84=st_transform(CAfield_wcoord_shp_intersect,crs=4326)
-st_write(CAfield_wcoord_shp_wgs84,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/output_2023jan/CAfield_wcoord_shp_wgs84.kml")
-write.csv(CAfield_wcoord_shp_wgs84,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/output_2023jan/CAfield_wcoord_shp_wgs84.csv")
+st_write(CAfield_wcoord_shp_wgs84,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/output_2023febr/CAfield_wcoord_shp_wgs84.kml")
+write.csv(CAfield_wcoord_shp_wgs84,"O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/output_2023febr/CAfield_wcoord_shp_wgs84.csv")
 
 # calc stat for fields in surroundings
 
@@ -209,13 +209,13 @@ for (i in 1:length(aoi)) { #length(aoi)
   
   # remove points close to the CA field
   
-  aoi2=buffer(areaofint[i],width=-2500)
+  aoi2=buffer(areaofint[i],width=-5000)
   centers_sel=centers_merge_shp[st_as_sf(aoi2), op = st_disjoint]
   
   centers_sel_wgs84=st_transform(centers_sel,crs=4326)
   
-  st_write(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/output_2023jan/",aoi$Name[i],"_centers_envprop_2500m_donut.kml"))
-  write.csv(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/output_2023jan/",aoi$Name[i],"_centers_envprop_2500m_donut.csv"))
+  st_write(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/output_2023febr/",aoi$Name[i],"_centers_envprop_5_7km_donut.kml"))
+  write.csv(centers_sel_wgs84,paste0("O:/Nat_Sustain-proj/_user/ZsofiaKoma_au700510/Fielddata_process/_Ecogenetics_crop/output_2023febr/",aoi$Name[i],"_centers_envprop_5_7km_donut.csv"))
   
 }
 
